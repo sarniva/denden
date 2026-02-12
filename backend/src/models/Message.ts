@@ -3,7 +3,7 @@ import mongoose, { Schema, type Document } from "mongoose";
 export interface IMessage extends Document {
   chat: mongoose.Types.ObjectId;
   sender: mongoose.Types.ObjectId;
-  text: String;
+  text: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,7 +29,7 @@ const MessageSchema = new Schema<IMessage>(
   { timestamps: true },
 );
 
-//indexing for faster quiries 
+//indexing for faster queries 
 MessageSchema.index({chat:1,createdAt:1}); //oldest one first
 
 export const Message = mongoose.model("Message", MessageSchema);

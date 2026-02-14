@@ -1,6 +1,7 @@
 import type { NextFunction, Response } from "express";
 import type { AuthRequest } from "../middleware/auth";
 import { Chat } from "../models/Chat";
+import { User } from "../models/User";
 
 export async function getChat(
   req: AuthRequest,
@@ -44,6 +45,14 @@ export async function getOrCreateChat(
   try {
     const userId = req.userId;
     const { participantId } = req.params;
+    if(userId === participantId){
+        res.status(400).json({message:"Can not create a chat with yourself"});
+    }
+    const participantExists = await User.exists({_id:participantId});
+
+    if(!participantExists){
+        res.status(400).json({message:"User does not exists"});
+    }
 
     let chat = await Chat.findOne({
       participants: { $all: [userId, participantId] },

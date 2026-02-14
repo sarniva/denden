@@ -16,7 +16,7 @@ export async function getUser(
 
     res.json(users);
   } catch (error) {
-    res.status(50);
+    res.status(500);
     next(error);
   }
 }

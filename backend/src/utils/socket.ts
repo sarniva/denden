@@ -5,9 +5,9 @@ import { Message } from "../models/Message";
 import { Chat } from "../models/Chat";
 import { User } from "../models/User";
 
-interface SocketWithUserId extends Socket {
-  userId: string;
-}
+// interface SocketWithUserId extends Socket {
+//   userId: string;
+// }
 //userId->socketId
 export const onlineUsers: Map<string, string> = new Map();
 
@@ -15,8 +15,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
   const allowedOrigins = [
     "http://localhost:8081",
     "http://localhost:5173",
-    process.env.FRONTEND_URL as string,
-  ];
+    process.env.FRONTEND_URL,
+  ].filter(Boolean) as string[];
   const io = new SocketServer(httpServer, { cors: { origin: allowedOrigins } });
 
   //verify the socket connection
@@ -34,7 +34,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
       const user = await User.findOne({ clerkId });
       if (!user) return next(new Error("User not found"));
 
-      (socket as SocketWithUserId).userId = user._id.toString();
+      socket.data.userId = user._id.toString();
 
       next();
     } catch (error: any) {
@@ -43,7 +43,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
   });
 
   io.on("connection", (socket) => {
-    const userId = (socket as SocketWithUserId).userId;
+    const userId = socket.data.userId;
 
     socket.emit("online-users", { userId: Array.from(onlineUsers.keys()) });
 
@@ -53,7 +53,20 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     socket.join(`user:${userId}`);
 
-    socket.on("join-chat", (chatId: string) => {
+    socket.on("join-chat", async (chatId: string) => {
+      try {
+        const allowed = await Chat.exists({
+          _id: chatId,
+          participants: userId,
+        });
+        if (!allowed) {
+          socket.emit("socket-error", { message: "Chat not found" });
+          return;
+        }
+        socket.join(`chat:${chatId}`);
+      } catch (error) {
+        socket.emit("socket-error", { message: "Failed to join chat" });
+      }
       socket.join(`chat:${chatId}`);
     });
 
@@ -89,9 +102,9 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
           await chat.save();
 
-          await message.populate("sender", "name email avatar");
+          await message.populate("sender", "name avatar");
 
-          io.to(`chat:${chatId}`).emit("new-message", message);
+          // io.to(`chat:${chatId}`).emit("new-message", message);
 
           for (const participantsId of chat.participants) {
             io.to(`user:${participantsId}`).emit("new-message", message);

@@ -13,7 +13,7 @@ const app = express();
 app.use(express.json());
 app.use(clerkMiddleware());
 
-app.get("/health", (req, res) => {
+app.get("/health", (_req, res) => {
   res.json({ status: "ok", message: "The server is up and running" });
 });
 

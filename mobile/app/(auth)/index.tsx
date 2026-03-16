@@ -11,7 +11,8 @@ import { Ionicons } from "@expo/vector-icons";
 import useAuthSocial from "@/hooks/useSocialAuth";
 const { width, height } = Dimensions.get("window");
 const AuthScreen = () => {
-  const { handleSocialAuth, loadingStratergy } = useAuthSocial();
+  const { handleSocialAuth, loadingStrategy } = useAuthSocial();
+  const isAuthLoading = Boolean(loadingStrategy);
 
   return (
     <View className="flex-1 bg-surface-dark">
@@ -50,13 +51,14 @@ const AuthScreen = () => {
               {/*Google btn */}
               <Pressable
                 className="flex-1 flex-row items-center justify-center gap-2 bg-white/95 py-4 rounded-2xl active:scale-[0.97]"
-                disabled={loadingStratergy === "oauth_google"}
+                disabled={isAuthLoading}
                 onPress={() => {
                   console.log("you pressed google btn");
+                  if (isAuthLoading) return;
                   handleSocialAuth("oauth_google");
                 }}
               >
-                {loadingStratergy === "oauth_google" ? (
+                {loadingStrategy === "oauth_google" ? (
                   <ActivityIndicator size="small" color="#1a1a1a" />
                 ) : (
                   <>
@@ -65,7 +67,7 @@ const AuthScreen = () => {
                       style={{ width: 19, height: 20 }}
                       contentFit="contain"
                     />
-                    <Text className="text-gray-901 font-semibold text-sm">
+                    <Text className="text-gray-900 font-semibold text-sm">
                       Google
                     </Text>
                   </>
@@ -73,24 +75,24 @@ const AuthScreen = () => {
               </Pressable>
               {/*Apple btn */}
               <Pressable
-                
                 className="flex-1 flex-row items-center justify-center gap-2 bg-white/10 py-4 rounded-2xl active:scale-[0.97]"
-                disabled={loadingStratergy === "oauth_apple"}
+                disabled={isAuthLoading}
                 onPress={() => {
                   console.log("you pressed ios btn");
+                  if (isAuthLoading) return;
                   handleSocialAuth("oauth_apple");
                 }}
               >
-                {loadingStratergy === "oauth_apple" ? (
+                {loadingStrategy === "oauth_apple" ? (
                   <ActivityIndicator size="small" color="#FFFFFF" />
-
-                ) : (<>
-                  <Ionicons name="logo-apple" size={20} color="#FFFFFF" />
-                  <Text className="text-foreground font-semibold text-sm">
-                    Apple
-                  </Text>
-                </>)}
-                
+                ) : (
+                  <>
+                    <Ionicons name="logo-apple" size={20} color="#FFFFFF" />
+                    <Text className="text-foreground font-semibold text-sm">
+                      Apple
+                    </Text>
+                  </>
+                )}
               </Pressable>
             </View>
           </View>

@@ -11,6 +11,7 @@ const AuthSync = () => {
   useEffect(() => {
     if (isSignedIn && user && !hasSynced.current) {
       hasSynced.current = true;
+
       syncUser(undefined, {
         onSuccess: (data) => {
           console.log("✅ User synced with backend", data.name);

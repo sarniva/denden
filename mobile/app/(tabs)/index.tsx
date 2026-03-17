@@ -1,9 +1,17 @@
-import { Text, ScrollView } from "react-native";
-
+import { Text, ScrollView, Button } from "react-native";
+import * as Sentry from "@sentry/react-native";
 const ChatsTab = () => {
   return (
     <ScrollView className="bg-black" contentInsetAdjustmentBehavior="automatic">
-      <Text className="text-white">Chat Tab</Text>
+      <Text className="text-white mt-10">Chat Tab</Text>
+      {__DEV__ && (
+        <Button
+          title="Try Sentry"
+          onPress={() => {
+            Sentry.captureMessage("Sentry test event from ChatsTab");
+          }}
+        />
+      )}
     </ScrollView>
   );
 };

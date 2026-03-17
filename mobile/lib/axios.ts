@@ -3,7 +3,15 @@ import { useAuth } from "@clerk/expo";
 import { useEffect } from "react";
 import * as Sentry from "@sentry/react-native";
 
-const API_URL = "http://192.168.31.145:3000/api";
+const API_URL = process.env.EXPO_PUBLIC_API_URL;
+
+if (!API_URL) {
+  throw new Error("Missing EXPO_PUBLIC_API_URL");
+}
+
+if (!__DEV__ && !API_URL.startsWith("https://")) {
+  throw new Error("EXPO_PUBLIC_API_URL must use https in non-dev builds");
+}
 
 const api = axios.create({
   baseURL: API_URL,

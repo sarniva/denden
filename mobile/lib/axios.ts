@@ -27,7 +27,7 @@ api.interceptors.response.use(
     if (error.response) {
       Sentry.logger.error(
         Sentry.logger
-          .fmt`API request failed: ${error.config?.method?.toUppercase()} ${error.config?.url}`,
+          .fmt`API request failed: ${error.config?.method?.toUpperCase()} ${error.config?.url}`,
         {
           status: error.response.status,
           endpoint: error.config?.url,

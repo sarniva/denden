@@ -15,7 +15,7 @@ const AuthScreen = () => {
   const isAuthLoading = Boolean(loadingStrategy);
 
   return (
-    <View className="flex-1 bg-surface-dark">
+    <View className="flex-1 bg-surface-dark pt-safe">
       {/*TODO: animated orbs */}
       <View className="absolute inset-0 overflow-hidden">
         <SafeAreaView className="flex-1">

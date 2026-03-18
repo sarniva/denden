@@ -39,9 +39,9 @@ const ChatsTab = () => {
       pathname: "/chat/[id]",
       params: {
         id: chat._id,
-        participantsId:chat.participant._id,
+        participantsId: chat.participant._id,
         name: chat.participant.name,
-        avatar: chat.participant.avatar
+        avatar: chat.participant.avatar,
       },
     });
   };

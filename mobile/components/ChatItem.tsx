@@ -13,7 +13,7 @@ const ChatItem = ({ chat, onPress }: { chat: Chat; onPress: () => void }) => {
 
   return (
     <Pressable
-      className="flex-1 items-center py-3 active:opacity-70"
+      className="w-full flex-row items-center py-3 active:opacity-70"
       onPress={onPress}
     >
       {/* avatar & online indicator */}

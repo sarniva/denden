@@ -5,9 +5,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 const ProfileTab = () => {
   const { signOut } = useAuth();
   return (
-    <SafeAreaView className="bg-black">
+    <SafeAreaView className="flex-1 bg-black">
       <ScrollView
-        className="bg-black"
+        className="flex-1 bg-black"
         contentInsetAdjustmentBehavior="automatic"
       >
         <Text className="text-white ">Profile Tab</Text>

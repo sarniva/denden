@@ -1,5 +1,5 @@
 import ChatItem from "@/components/ChatItem";
-import { useChats } from "@/hooks/useChat";
+import { useChats } from "@/hooks/useChats";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -69,9 +69,12 @@ const ChatsTab = () => {
           ListHeaderComponent={<Header />}
           ListEmptyComponent={
             <EmptyUI
-              title="Chat Not Found"
+              title="No Chats yet"
+              subtitle="Start a conversation"
               buttonLabel="New Chat"
-              onPressButton={() => console.log("you pressed the button")}
+              onPressButton={() => {
+                router.push("/new-chat");
+              }}
             />
           }
         />
@@ -91,7 +94,7 @@ function Header() {
         <Text className="text-2xl font-bold text-foreground">Chats</Text>
         <Pressable
           className="size-10 bg-primary rounded-full items-center justify-center"
-          // onPress={() => router.push("/new-chat")}
+          onPress={() => router.push("/new-chat")}
         >
           <Ionicons name="create-outline" size={20} color="#0D0D0F" />
         </Pressable>

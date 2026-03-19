@@ -7,6 +7,7 @@ type UserItemProps = {
   isOnline: boolean;
   onPress: () => void;
 };
+const FALL_BACK_AVATAR = "";
 
 function UserItem({ user, isOnline, onPress }: UserItemProps) {
   return (
@@ -16,8 +17,9 @@ function UserItem({ user, isOnline, onPress }: UserItemProps) {
     >
       <View className="relative">
         <Image
-          source={{ uri: user.avatar }}
+          source={{ uri: user.avatar || FALL_BACK_AVATAR }}
           style={{ width: 48, height: 48, borderRadius: 999 }}
+          placeholder={require("@/assets/images/react-logo.png")}
         />
         {isOnline && (
           <View className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-green-500 rounded-full border-[2px] border-surface" />

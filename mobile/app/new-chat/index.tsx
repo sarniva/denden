@@ -15,7 +15,7 @@ import { useGetOrCreateChat } from "@/hooks/useChats";
 import { User } from "@/types";
 import UserItem from "@/components/UserItem";
 
-const NewChatScrren = () => {
+const NewChatScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const { data: allUsers, isLoading } = useUsers();
   const { mutate: getOrCreateChat, isPending: isCreatingChat } =
@@ -82,12 +82,6 @@ const NewChatScrren = () => {
                 onChangeText={setSearchQuery}
                 autoCapitalize="none"
               />
-              <View>
-                <Text className="color"></Text>
-              </View>
-              <View>
-                <Text className="color"></Text>
-              </View>
             </View>
           </View>
           {/* USERS LIST */}
@@ -132,4 +126,4 @@ const NewChatScrren = () => {
   );
 };
 
-export default NewChatScrren;
+export default NewChatScreen;

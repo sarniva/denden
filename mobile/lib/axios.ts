@@ -3,7 +3,7 @@ import { useAuth } from "@clerk/expo";
 import { useCallback, useEffect } from "react";
 import * as Sentry from "@sentry/react-native";
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL;
+const API_URL = `${process.env.EXPO_PUBLIC_API_URL}/api`;
 
 if (!API_URL) {
   throw new Error("Missing EXPO_PUBLIC_API_URL");

@@ -181,7 +181,7 @@ export const useSocketStore = create<SocketState>((set, get) => ({
     });
 
     if (socket?.connected) {
-      socket.emit("joint-chat", chatId);
+      socket.emit("join-chat", chatId);
     }
   },
   leaveChat: (chatId) => {

@@ -119,6 +119,11 @@ export const initializeSocket = (httpServer: HttpServer) => {
       };
 
       //emit to chat room (for users inside the chat)
+      const allowed = await Chat.exists({
+        _id: data.chatId,
+        participants: userId,
+      });
+      if (!allowed) return;
       socket.to(`chat:${data.chatId}`).emit("typing", typingPayload);
 
       //also emit to other participant's personal rooms (for chat list view)

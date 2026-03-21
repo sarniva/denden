@@ -10,7 +10,7 @@ export const useMessages = (chatId: string) => {
     queryFn: async (): Promise<Message[]> => {
       const { data } = await apiWithAuth<Message[]>({
         method: "GET",
-        url: `/messages/chat/${chatId}`,
+        url: `/message/chat/${chatId}`,
       });
       return data;
     },

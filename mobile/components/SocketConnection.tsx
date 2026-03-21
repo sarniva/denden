@@ -10,13 +10,33 @@ const SocketConnection = () => {
   const disconnect = useSocketStore((state) => state.disconnect);
 
   useEffect(() => {
-    if (isSignedIn) {
-      getToken().then((token) => {
-        if (token) connect(token, queryClient);
-      });
-    } else disconnect();
+    // if (isSignedIn) {
+    //   getToken().then((token) => {
+    //     if (token) connect(token, queryClient);
+    //   });
+    // } else disconnect();
+    let cancelled = false;
+
+    const syncSocket = async () => {
+      if (!isSignedIn) {
+        disconnect();
+        return;
+      }
+
+      try {
+        const token = await getToken();
+        if (!cancelled && token) {
+          connect(token, queryClient);
+        }
+      } catch {
+        if (!cancelled) disconnect();
+      }
+
+      void syncSocket();
+    };
 
     return () => {
+      cancelled = true;
       disconnect();
     };
   }, [isSignedIn, connect, disconnect, getToken, queryClient]);

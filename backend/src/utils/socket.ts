@@ -112,28 +112,28 @@ export const initializeSocket = (httpServer: HttpServer) => {
     );
 
     socket.on("typing", async (data: { chatId: string; isTyping: boolean }) => {
-      const typingPayload = {
-        userId,
-        chatId: data.chatId,
-        isTyping: data.isTyping,
-      };
-
-      //emit to chat room (for users inside the chat)
-      const allowed = await Chat.exists({
-        _id: data.chatId,
-        participants: userId,
-      });
-      if (!allowed) return;
-      socket.to(`chat:${data.chatId}`).emit("typing", typingPayload);
-
-      //also emit to other participant's personal rooms (for chat list view)
       try {
+        const allowed = await Chat.exists({
+          _id: data.chatId,
+          participants: userId,
+        });
+        if (!allowed) return;
+        const typingPayload = {
+          userId,
+          chatId: data.chatId,
+          isTyping: data.isTyping,
+        };
+        
+        //emit to chat room (for users inside the chat)
+        socket.to(`chat:${data.chatId}`).emit("typing", typingPayload);
+
         const chat = await Chat.findById(data.chatId);
         if (chat) {
           const otherParticipantsId = chat.participants.find(
             (p: any) => p.toString() !== userId,
           );
           if (otherParticipantsId) {
+            //also emit to other participant's personal rooms (for chat list view)
             socket
               .to(`user:${otherParticipantsId}`)
               .emit("typing", typingPayload);

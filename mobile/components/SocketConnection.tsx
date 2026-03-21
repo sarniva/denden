@@ -31,9 +31,9 @@ const SocketConnection = () => {
       } catch {
         if (!cancelled) disconnect();
       }
-
-      void syncSocket();
     };
+
+    void syncSocket();
 
     return () => {
       cancelled = true;

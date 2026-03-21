@@ -26,7 +26,6 @@ export interface ChatLastMessage {
   text: string;
   sender: string;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface Chat {

@@ -14,12 +14,15 @@ import { useUsers } from "@/hooks/useUsers";
 import { useGetOrCreateChat } from "@/hooks/useChats";
 import { User } from "@/types";
 import UserItem from "@/components/UserItem";
+import { useSocketStore } from "@/lib/socket";
 
 const NewChatScreen = () => {
   const [searchQuery, setSearchQuery] = useState("");
+
   const { data: allUsers, isLoading } = useUsers();
-  const { mutate: getOrCreateChat, isPending: isCreatingChat } =
-    useGetOrCreateChat();
+  const { mutate: getOrCreateChat, isPending: isCreatingChat } = useGetOrCreateChat();
+  const {onlineUsers}=useSocketStore()
+
   //client-side filtering
   const users = allUsers?.filter((user) => {
     if (!searchQuery.trim()) return true;
@@ -40,7 +43,7 @@ const NewChatScreen = () => {
             pathname: "/chat/[id]",
             params: {
               id: chat._id,
-              participantsId: chat.participant._id,
+              participantId: chat.participant._id,
               name: chat.participant.name,
               avatar: chat.participant.avatar,
             },
@@ -113,7 +116,7 @@ const NewChatScreen = () => {
                   <UserItem
                     user={user}
                     key={user._id}
-                    isOnline={true}
+                    isOnline={onlineUsers.has(user._id)}
                     onPress={() => handleUserSelect(user)}
                   />
                 ))}

@@ -1,13 +1,10 @@
-import { Socket, Server as SocketServer } from "socket.io";
+import { Server as SocketServer } from "socket.io";
 import { Server as HttpServer } from "http";
 import { verifyToken } from "@clerk/express";
 import { Message } from "../models/Message";
 import { Chat } from "../models/Chat";
 import { User } from "../models/User";
 
-// interface SocketWithUserId extends Socket {
-//   userId: string;
-// }
 //userId->socketId
 export const onlineUsers: Map<string, string> = new Map();
 
@@ -67,7 +64,6 @@ export const initializeSocket = (httpServer: HttpServer) => {
       } catch (error) {
         socket.emit("socket-error", { message: "Failed to join chat" });
       }
-      socket.join(`chat:${chatId}`);
     });
 
     socket.on("leave-chat", (chatId: string) => {
@@ -104,18 +100,50 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
           await message.populate("sender", "name avatar");
 
-          // io.to(`chat:${chatId}`).emit("new-message", message);
+          io.to(`chat:${chatId}`).emit("new-message", message);
 
-          for (const participantsId of chat.participants) {
-            io.to(`user:${participantsId}`).emit("new-message", message);
-          }
+          // for (const participantsId of chat.participants) {
+          //   io.to(`user:${participantsId}`).emit("new-message", message);
+          // }
         } catch (error) {
           socket.emit("socket-error", { message: "Failed to send messages" });
         }
       },
     );
-    //TODO: LATER
-    socket.on("typing", async (data) => {});
+
+    socket.on("typing", async (data: { chatId: string; isTyping: boolean }) => {
+      try {
+        const allowed = await Chat.exists({
+          _id: data.chatId,
+          participants: userId,
+        });
+        if (!allowed) return;
+        const typingPayload = {
+          userId,
+          chatId: data.chatId,
+          isTyping: data.isTyping,
+        };
+        
+        //emit to chat room (for users inside the chat)
+        socket.to(`chat:${data.chatId}`).emit("typing", typingPayload);
+
+        const chat = await Chat.findById(data.chatId);
+        if (chat) {
+          const otherParticipantsId = chat.participants.find(
+            (p: any) => p.toString() !== userId,
+          );
+          if (otherParticipantsId) {
+            //also emit to other participant's personal rooms (for chat list view)
+            socket
+              .to(`user:${otherParticipantsId}`)
+              .emit("typing", typingPayload);
+          }
+        }
+      } catch (error) {
+        //silently fail -- typing indicator is not critical
+        console.log(error);
+      }
+    });
 
     socket.on("disconnect", () => {
       onlineUsers.delete(userId);

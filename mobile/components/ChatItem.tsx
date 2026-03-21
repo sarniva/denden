@@ -2,14 +2,16 @@ import { View, Text, Pressable } from "react-native";
 import { Chat } from "@/types";
 import { Image } from "expo-image";
 import { formatDistanceToNow } from "date-fns";
+import { useSocketStore } from "@/lib/socket";
 
 const ChatItem = ({ chat, onPress }: { chat: Chat; onPress: () => void }) => {
-  const participants = chat.participant;
+  const participant = chat.participant;
 
-  //TODO: update these later
-  const isOnline = true;
-  const isTyping = false;
-  const hasUnread = false;
+  const { onlineUsers, typingUsers, unreadChats } = useSocketStore();
+
+  const isOnline = onlineUsers.has(participant._id);
+  const isTyping = typingUsers.get(chat._id) === participant._id;
+  const hasUnread = unreadChats.has(chat._id);
 
   return (
     <Pressable
@@ -19,7 +21,7 @@ const ChatItem = ({ chat, onPress }: { chat: Chat; onPress: () => void }) => {
       {/* avatar & online indicator */}
       <View className="relative">
         <Image
-          source={{ uri: participants.avatar }}
+          source={{ uri: participant.avatar }}
           style={{ width: 56, height: 56, borderRadius: 999 }}
         />
 
@@ -34,7 +36,7 @@ const ChatItem = ({ chat, onPress }: { chat: Chat; onPress: () => void }) => {
           <Text
             className={`text-base font-medium ${hasUnread ? "text-primary" : "text-foreground"}`}
           >
-            {participants.name}
+            {participant.name}
           </Text>
           <View className="flex-row items-center gap-2">
             {hasUnread && (
